@@ -1,0 +1,8 @@
+## Interface: 40000
+## Author: Belliofria
+## Version: $Id$
+## Title: GearSwitcher
+## Notes: Switches gear on stance changes for warriors
+## SavedVariablesPerCharacter: gearDB
+
+GearSwitcher.lua
