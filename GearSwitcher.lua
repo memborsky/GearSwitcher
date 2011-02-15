@@ -90,13 +90,15 @@ local function debug(message) DEFAULT_CHAT_FRAME:AddMessage(message) end
 
 
 local function CheckPvPStatus(currentZone)
+    local pvpzone = false
+
     for _, zone in pairs(PvPZoneNames) do
         if zone == currentZone then
-            return true
+            pvpzone = true
         end
     end
 
-    if UnitIsPVP("player") then
+    if pvpzone and UnitIsPVP("player") then
         return true
     end
 
