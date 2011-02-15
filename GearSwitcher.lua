@@ -59,11 +59,49 @@ local invSlots = {
     [17] = "SecondaryHandSlot"
 }
 
+-- PVP Zones
+local PvPZoneNames = {
+    -- Battlegrounds
+    "Warsong Gulch",
+    "Arathi Basin",
+    "Twin Peaks",
+    "The Battle for Gilneas",
+    "Eye of the Storm",
+    "Atlerac Valley",
+    "Strand of the Ancients",
+    "Isle of Conquest",
+
+    -- Arenas
+    "The Ring of Valor",
+    "The Ruins of Lordaeron",
+    "The Ring of Trials",
+    "The Circle of Blood",
+    "The Dalaran Arena",
+
+    -- World PvP Zones
+    "Tol Barad",    -- Cata
+    "Wintergrasp",  -- WoTLK
+}
+
 
 -- Debugging
 local function debug(message) DEFAULT_CHAT_FRAME:AddMessage(message) end
 
 
+
+local function CheckPvPStatus(currentZone)
+    for _, zone in pairs(PvPZoneNames) do
+        if zone == currentZone then
+            return true
+        end
+    end
+
+    if UnitIsPVP("player") then
+        return true
+    end
+
+    return false
+end
 
 
 
@@ -104,8 +142,8 @@ local function CheckForUpdates(stance, change_weapons)
 
     for slotID, slot in pairs(invSlots) do
         if slot == "MainHandSlot" or slot == "SecondaryHandSlot" then
-            if equipped[slot] ~= "" then
-                if sets[stance]["Gear"][slot] == "" then
+            if equipped[slot] and equipped[slot] ~= "" then
+                if sets[stance]["Gear"][slot] == "" and equipped[slot] ~= "" then
                     sets[stance]["Gear"][slot] = equipped[slot]
                     weaponUpdate = true
                 else
@@ -251,7 +289,7 @@ local function DefaultSet()
             }
         },
         [2] = {
-            ["SetName"] = "PvP Proection",
+            ["SetName"] = "PvP Protection",
             ["Gear"] = {
                 ["MainHandSlot"] = "",
                 ["SecondaryHandSlot"] = "",
@@ -300,7 +338,7 @@ gearSwitcher:SetScript("OnEvent", function(self, event, ...)
         gearDB = sets
     elseif event == "UPDATE_SHAPESHIFT_FORM" then
         -- Make sure that the weapon switching is only going to happen for pvp zones.
-        if select(2, IsInInstance()) ~= "pvp" then return end
+        if not CheckPvPStatus(GetRealZoneText()) then return end
 
         local stance = GetShapeshiftForm()
         local set
@@ -346,6 +384,14 @@ end)
 local function handleSlash (msg)
     if msg == "reset" then
         sets = DefaultSet()
+
+        for index = 1, GetNumEquipmentSets() do
+            for stance = 1, 3 do
+                if GetEquipmentSetInfo(index) == sets[stance]["SetName"] then
+                    DeleteEquipmentSet(sets[stance]["SetName"])
+                end
+            end
+        end
         return
     end
 
