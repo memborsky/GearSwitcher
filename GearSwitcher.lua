@@ -72,11 +72,11 @@ local PvPZoneNames = {
     "Isle of Conquest",
 
     -- Arenas
+    "Blade's Edge Arena",
+    "Dalaran Arena",
+    "Nagrand Arena",
+    "Ruins of Lordaeron",
     "The Ring of Valor",
-    "The Ruins of Lordaeron",
-    "The Ring of Trials",
-    "The Circle of Blood",
-    "The Dalaran Arena",
 
     -- World PvP Zones
     "Tol Barad",    -- Cata
