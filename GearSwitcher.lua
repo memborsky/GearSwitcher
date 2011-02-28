@@ -6,8 +6,8 @@ local gearSwitcher = CreateFrame("Frame")
 -- Used to hold our set data, auto fills with saved data later
 local sets = {}
 
--- Defaults to Fury with a subspec in Single-Minded Fury
-local playerSpec = {"Fury", "Single-Minded Fury"}
+-- Defaults to Arms
+local playerSpec = {"Arms", ""}
 
 -- Queue up changes if we enter into combat or are changing sets while in combat
 local queue = {}
@@ -248,18 +248,29 @@ end
 local function SetSpec()
     for tab = 1, GetNumTalentTabs() do
         if select(5, GetTalentTabInfo(tab)) >= 31 then
-            local name = select(2, GetTalentTabInfo(tab))
+            local spec = select(2, GetTalentTabInfo(tab))
 
-            if name == "Fury" then
-                playerSpec = {name, select(5, GetTalentInfo(tab, 20)) == 1 and GetTalentInfo(tab, 20) or (select(5, GetTalentInfo(tab, 21)) == 1 and GetTalentInfo(tab, 21) or "")}
+            debug("Setting Spec = " .. spec)
+
+            if spec == "Fury" then
+                playerSpec = {spec, select(5, GetTalentInfo(tab, 20)) == 1 and GetTalentInfo(tab, 20) or (select(5, GetTalentInfo(tab, 21)) == 1 and GetTalentInfo(tab, 21) or "")}
+                debug("Subspec = " .. select(5, GetTalentInfo(tab, 20)) == 1 and GetTalentInfo(tab, 20) or (select(5, GetTalentInfo(tab, 21)) == 1 and GetTalentInfo(tab, 21) or ""))
             else
-                playerSpec = {name, ""}
+                playerSpec = {spec, ""}
             end
         end
     end
 end
 
+local function WhatSpecAmI()
+    for tab = 1, GetNumTalentTabs() do
+        if select(5, GetTalentTabInfo(tab)) >= 31 then
+            return select(2, GetTalentTabInfo(tab))
+        end
+    end
 
+    return ""
+end
 
 
 -- Default set table
@@ -337,6 +348,10 @@ gearSwitcher:SetScript("OnEvent", function(self, event, ...)
     elseif event == "PLAYER_LOGOUT" then
         gearDB = sets
     elseif event == "UPDATE_SHAPESHIFT_FORM" then
+        if WhatSpecAmI() ~= playerSpec[1] then
+            SetSpec()
+        end
+
         -- Make sure that the weapon switching is only going to happen for pvp zones.
         if not CheckPvPStatus(GetRealZoneText()) then return end
 
@@ -344,16 +359,16 @@ gearSwitcher:SetScript("OnEvent", function(self, event, ...)
         local set
 
         if sets and sets[stance] then
-            local name, subspec = unpack(playerSpec)
+            local spec, subspec = unpack(playerSpec)
             local mainhand, secondaryhand
 
-            if name == "Fury" then
+            if spec == "Fury" then
                 if (stance == 1 or stance == 3) then
                     set = sets[3]["SetName"]
                 else
                     set = sets[2]["SetName"]
                 end
-            elseif name == "Arms" then
+            elseif spec == "Arms" then
                 if (stance == 1 or stance == 3) then
                     set = sets[1]["SetName"]
                 else
@@ -417,8 +432,8 @@ local function handleSlash (msg)
         if not sets or sets == nil or sets == {} then
             sets = DefaultSet()
         end
-        
-        sets = DefaultSet()
+
+        -- XXX: Attempt to make an educated guess on what spec/stance they want
         return
     end
 
