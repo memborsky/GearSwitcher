@@ -250,8 +250,6 @@ local function SetSpec()
         if select(5, GetTalentTabInfo(tab)) >= 31 then
             local spec = select(2, GetTalentTabInfo(tab))
 
-            debug("Setting Spec = " .. spec)
-
             if spec == "Fury" then
                 playerSpec = {spec, select(5, GetTalentInfo(tab, 20)) == 1 and GetTalentInfo(tab, 20) or (select(5, GetTalentInfo(tab, 21)) == 1 and GetTalentInfo(tab, 21) or "")}
                 debug("Subspec = " .. select(5, GetTalentInfo(tab, 20)) == 1 and GetTalentInfo(tab, 20) or (select(5, GetTalentInfo(tab, 21)) == 1 and GetTalentInfo(tab, 21) or ""))
