@@ -89,7 +89,7 @@ local function debug(message) DEFAULT_CHAT_FRAME:AddMessage(message) end
 
 
 
-local function CheckPvPStatus(currentZone)
+local function CheckPvPStatus (currentZone)
     for _, zone in pairs(PvPZoneNames) do
         if zone == currentZone and UnitIsPVP("player") then
             return true
@@ -107,7 +107,7 @@ end
 
 
 -- Returns a table of currently equipped gear as {[slot] = itemLink}
-local function GetEquipped()
+local function GetEquipped ()
     local gear = {}
 
     for slotID, slot in pairs(invSlots) do
